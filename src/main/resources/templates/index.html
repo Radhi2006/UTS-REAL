@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pengajuan Cuti</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 960px; margin: 24px auto; padding: 0 16px; color: #222; }
+        h1 { margin-bottom: 4px; }
+        .sub { color: #666; margin-top: 0; }
+        section { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        label { display: block; margin: 8px 0 4px; font-weight: 600; }
+        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 14px; border: 0; border-radius: 4px; cursor: pointer; color: #fff; background: #2563eb; margin-top: 10px; }
+        button.ok { background: #16a34a; }
+        button.no { background: #dc2626; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .flash { background: #ecfdf5; border: 1px solid #10b981; padding: 8px 12px; border-radius: 4px; }
+        .badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #eee; }
+        .DISETUJUI { background: #dcfce7; color: #166534; }
+        .DITOLAK { background: #fee2e2; color: #991b1b; }
+        form.inline { display: inline; }
+        nav a { margin-right: 12px; }
+    </style>
+</head>
+<body>
+<h1>Pengajuan Cuti Karyawan</h1>
+<p class="sub">Spring Boot + Camunda BPMN &mdash; proses <code>pengajuan-cuti</code></p>
+<nav>
+    <a href="/camunda/app/cockpit/" target="_blank">Cockpit</a>
+    <a href="/camunda/app/tasklist/" target="_blank">Tasklist</a>
+    <a href="/hello" target="_blank">Hello World</a>
+</nav>
+
+<p class="flash" th:if="${pesan}" th:text="${pesan}"></p>
+
+<section>
+    <h2>1. Ajukan Cuti (Karyawan)</h2>
+    <form method="post" action="/cuti">
+        <label for="nama">Nama</label>
+        <input id="nama" name="nama" required>
+        <label for="jumlahHari">Jumlah hari (maks. 12)</label>
+        <input id="jumlahHari" name="jumlahHari" type="number" min="0" value="3">
+        <label for="alasan">Alasan</label>
+        <textarea id="alasan" name="alasan" rows="2"></textarea>
+        <button type="submit">Kirim Pengajuan</button>
+    </form>
+</section>
+
+<section>
+    <h2>2. Menunggu Persetujuan (Atasan)</h2>
+    <p th:if="${#lists.isEmpty(menunggu)}">Tidak ada pengajuan yang menunggu.</p>
+    <table th:unless="${#lists.isEmpty(menunggu)}">
+        <tr><th>Nama</th><th>Hari</th><th>Alasan</th><th>Aksi</th></tr>
+        <tr th:each="m : ${menunggu}">
+            <td th:text="${m.vars['nama']}"></td>
+            <td th:text="${m.vars['jumlahHari']}"></td>
+            <td th:text="${m.vars['alasan']}"></td>
+            <td>
+                <form class="inline" method="post" th:action="@{/task/{id}(id=${m.task.id})}">
+                    <input type="hidden" name="disetujui" value="true">
+                    <button class="ok" type="submit">Setujui</button>
+                </form>
+                <form class="inline" method="post" th:action="@{/task/{id}(id=${m.task.id})}">
+                    <input type="hidden" name="disetujui" value="false">
+                    <button class="no" type="submit">Tolak</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>3. Riwayat Pengajuan</h2>
+    <p th:if="${#lists.isEmpty(riwayat)}">Belum ada pengajuan.</p>
+    <table th:unless="${#lists.isEmpty(riwayat)}">
+        <tr><th>Waktu</th><th>Nama</th><th>Hari</th><th>Status</th><th>Keterangan</th></tr>
+        <tr th:each="r : ${riwayat}">
+            <td th:text="${#dates.format(r.mulai, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${r.get('nama')}"></td>
+            <td th:text="${r.get('jumlahHari')}"></td>
+            <td><span class="badge" th:classappend="${r.get('status')}" th:text="${r.get('status')}"></span></td>
+            <td th:text="${r.get('keterangan')}"></td>
+        </tr>
+    </table>
+</section>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  id="Definitions_HelloWorld"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <bpmn:process id="hello-world" name="Hello World" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:startEvent id="StartEvent_Hello" name="Mulai">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_SayHello" name="Cetak Hello World" camunda:delegateExpression="${helloWorldDelegate}">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_Hello" name="Selesai">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_Hello" targetRef="Task_SayHello" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_SayHello" targetRef="EndEvent_Hello" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Hello">
+    <bpmndi:BPMNPlane id="BPMNPlane_Hello" bpmnElement="hello-world">
+      <bpmndi:BPMNShape id="StartEvent_Hello_di" bpmnElement="StartEvent_Hello">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="157" y="125" width="27" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SayHello_di" bpmnElement="Task_SayHello">
+        <dc:Bounds x="240" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Hello_di" bpmnElement="EndEvent_Hello">
+        <dc:Bounds x="392" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="392" y="125" width="36" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="240" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="100" />
+        <di:waypoint x="392" y="100" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

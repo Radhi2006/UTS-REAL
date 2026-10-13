@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.16'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.radhi'
+version = '0.0.1-SNAPSHOT'
+description = 'UTS-REAL - Pengajuan Cuti dengan Spring Boot + Camunda BPMN'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    camundaVersion = '7.24.0'
+}
+
+dependencies {
+    // Camunda BPM engine + REST API + webapps (Cockpit, Tasklist, Admin)
+    implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-webapp:${camundaVersion}"
+    implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest:${camundaVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
